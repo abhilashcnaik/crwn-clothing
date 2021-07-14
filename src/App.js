@@ -20,7 +20,7 @@ class App extends Component {
   unsubscribeFromAuth = null;
 
   componentDidMount() {
-    const {setCurrentUser} = this.props
+    const { setCurrentUser } = this.props
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
 
       console.log(userAuth);
@@ -36,7 +36,7 @@ class App extends Component {
           });
         });
         //calling the action method
-        setCurrentUser(userAuth );
+        setCurrentUser(userAuth);
       } else {
         setCurrentUser(null);
       }
@@ -46,8 +46,6 @@ class App extends Component {
   componentWillUnmount() {
     this.unsubscribeFromAuth();
   }
-
-
 
   render() {
     return (
@@ -69,7 +67,7 @@ const mapStateToProps = createStructuredSelector(
   {
     currentUser: selectCurrentUser
   }
-  
+
 )
 
 // converting the setCurrentUser method and pass it to App.js as a prop
