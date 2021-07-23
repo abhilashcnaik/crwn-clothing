@@ -3,7 +3,7 @@ import UserActionTypes from "./user.types";
 
 import { auth, googleProvider, createUserProfileDocument } from "../../firebase/firebase.utils";
 
-import { googleSignInSuccess, googleSignInFailure } from "./user.actions";
+import { googleSignInSuccess, googleSignInFailure, emailSignInSuccess, emailSignInFailure } from "./user.actions";
 
 
 export function* signInWithGoogle() {
@@ -18,13 +18,17 @@ export function* signInWithGoogle() {
     }
 }
 
-export function* signInWithEmail(emailAndPassword) {
-    const { email, password } = emailAndPassword;
+export function* signInWithEmail({payload: {email, password}}) {
     try {
         const { user } = yield auth.signInWithEmailAndPassword(email, password);
+        const userRef = yield call(createUserProfileDocument, user);
+        const userSnapshot = yield userRef.get();
+
+        yield put(emailSignInSuccess({ id: userSnapshot.id, ...userSnapshot.data() }));
         
     } catch (error) {
         console.log(error);
+        yield put(emailSignInFailure(error))
     }
 }
 
@@ -37,5 +41,5 @@ export function* onEmailSignInStart() {
 }
 
 export function* userSagas() {
-    yield all([call(onGoogleSignInStart)])
+    yield all([call(onGoogleSignInStart), call(onEmailSignInStart)])
 }
