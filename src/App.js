@@ -8,10 +8,9 @@ import Header from './components/header/header.component';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component';
 import CheckoutPage from './pages/checkout/checkout.component';
 
-import { setCurrentUser } from './redux/user/user.actions';
-
 import { selectCurrentUser } from './redux/user/user.selectors';
 import { createStructuredSelector } from 'reselect';
+import { checkUserSession } from './redux/user/user.actions';
 
 class App extends Component {
 
@@ -19,7 +18,8 @@ class App extends Component {
   unsubscribeFromAuth = null;
 
   componentDidMount() {
-    
+    const { checkUserSession } = this.props;
+    checkUserSession();
   }
 
   componentWillUnmount() {
@@ -46,7 +46,6 @@ const mapStateToProps = createStructuredSelector(
   {
     currentUser: selectCurrentUser
   }
-
 )
 
 // converting the setCurrentUser method and pass it to App.js as a prop
@@ -54,7 +53,7 @@ const mapStateToProps = createStructuredSelector(
 // we are not calling setCurrentUser function here. We are just getting a reference of setCurrentUser function of action(user.actions.js) and making it
 // available to app.js
 const mapDispatchToProps = dispatch => ({
-  setCurrentUser: user => dispatch(setCurrentUser(user))
+  checkUserSession: () => dispatch(checkUserSession())
 })
 
 //connecting action here. on triggering this action in componentDidMount() redux publishes to all reducers

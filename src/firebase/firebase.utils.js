@@ -26,10 +26,10 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
     const snapShot = await userRef.get();
 
     if (!snapShot.exists) {
-        const {displayName, email } = userAuth;
+        const { displayName, email } = userAuth;
         const createdAt = new Date();
 
-        console.log('additionalData ',additionalData);
+        console.log('additionalData ', additionalData);
 
         try {
             await userRef.set({
@@ -39,7 +39,7 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
                 ...additionalData
             })
         } catch (e) {
-            console.log('error creating user ',e.message);
+            console.log('error creating user ', e.message);
         }
     }
 
@@ -48,7 +48,7 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
 
 export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
     const collectionRef = firestore.collection(collectionKey);
-    console.log('collection ref ' ,collectionRef);
+    console.log('collection ref ', collectionRef);
 
     const batch = firestore.batch();
 
@@ -62,9 +62,10 @@ export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => 
 }
 
 export const collectCollectionsSnapshotToMap = (collections) => {
+    console.log('collections ', collections);
     const transformedCollections = collections.docs.map(doc => {
-        const {title, items} = doc.data();
-        
+        const { title, items } = doc.data();
+
         return {
             routeName: encodeURI(title.toLowerCase()),
             id: doc.id,
@@ -77,6 +78,15 @@ export const collectCollectionsSnapshotToMap = (collections) => {
         accumulator[collection.title.toLowerCase()] = collection;
         return accumulator;
     }, {})
+}
+
+export const getCurrentUser = () => {
+    return new Promise((resolve, reject) => {
+        const unsubscribe = auth.onAuthStateChanged(userAuth => {
+            unsubscribe();
+            resolve(userAuth);
+        }, reject)
+    })
 }
 
 export const googleProvider = new firebase.auth.GoogleAuthProvider();
